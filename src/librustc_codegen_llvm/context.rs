@@ -143,6 +143,18 @@ fn strip_function_ptr_alignment(data_layout: String) -> String {
     data_layout.replace("-Fi8-", "-")
 }
 
+fn strip_x86_address_spaces(data_layout: String) -> String {
+    data_layout.replace("-p270:32:32-p271:32:32-p272:64:64-", "-")
+}
+
+fn add_x86_address_spaces(mut data_layout: String) -> String {
+    let address_spaces = "-p270:32:32-p271:32:32-p272:64:64";
+    if !data_layout.contains(address_spaces) {
+        data_layout.insert_str("e-m:X".len(), address_spaces);
+    }
+    data_layout
+}
+
 pub unsafe fn create_module(
     tcx: TyCtxt<'_>,
     llcx: &'ll llvm::Context,
@@ -155,6 +167,13 @@ pub unsafe fn create_module(
     let mut target_data_layout = sess.target.target.data_layout.clone();
     if llvm_util::get_major_version() < 9 {
         target_data_layout = strip_function_ptr_alignment(target_data_layout);
+    }
+    if sess.target.target.arch == "x86" || sess.target.target.arch == "x86_64" {
+        if llvm_util::get_major_version() < 10 {
+            target_data_layout = strip_x86_address_spaces(target_data_layout);
+        } else {
+            target_data_layout = add_x86_address_spaces(target_data_layout);
+        }
     }
 
     // Ensure the data-layout values hardcoded remain the defaults.

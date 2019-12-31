@@ -1450,7 +1450,7 @@ struct LLVMRustModuleBuffer {
 
 extern "C" LLVMRustModuleBuffer*
 LLVMRustModuleBufferCreate(LLVMModuleRef M) {
-  auto Ret = llvm::make_unique<LLVMRustModuleBuffer>();
+  auto Ret = std::make_unique<LLVMRustModuleBuffer>();
   {
     raw_string_ostream OS(Ret->data);
     {

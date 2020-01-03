@@ -18,8 +18,7 @@ extern "C" RustLinker*
 LLVMRustLinkerNew(LLVMModuleRef DstRef) {
   Module *Dst = unwrap(DstRef);
 
-  auto Ret = std::make_unique<RustLinker>(*Dst);
-  return Ret.release();
+  return new RustLinker(*Dst);
 }
 
 extern "C" void

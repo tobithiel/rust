@@ -149,8 +149,12 @@ fn strip_x86_address_spaces(data_layout: String) -> String {
 
 fn add_x86_address_spaces(mut data_layout: String) -> String {
     let address_spaces = "-p270:32:32-p271:32:32-p272:64:64";
-    if !data_layout.contains(address_spaces) {
-        data_layout.insert_str("e-m:X".len(), address_spaces);
+    if !data_layout.contains(address_spaces) && data_layout.starts_with("e-m:") {
+        let mut insert_pos = "e-m:?".len();
+        if data_layout[insert_pos..].starts_with("-p:32:32") {
+            insert_pos += "-p:32:32".len();
+        }
+        data_layout.insert_str(insert_pos, address_spaces);
     }
     data_layout
 }

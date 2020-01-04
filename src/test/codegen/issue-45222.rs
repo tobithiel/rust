@@ -1,5 +1,6 @@
 // compile-flags: -O
 // ignore-debug: the debug assertions get in the way
+// ignore-test: Codegen regression in LLVM 10
 
 #![crate_type = "lib"]
 
